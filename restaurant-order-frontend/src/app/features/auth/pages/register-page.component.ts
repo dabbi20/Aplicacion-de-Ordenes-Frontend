@@ -21,11 +21,11 @@ export class RegisterPageComponent {
   errorMessage = '';
   successMessage = '';
 
-registerForm = this.fb.group({
-  name: ['', [Validators.required, Validators.minLength(2)]],
-  email: ['', [Validators.required, Validators.email]],
-  password: ['', [Validators.required, Validators.minLength(4)]]
-});
+  registerForm = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(4)]]
+  });
 
   onSubmit(): void {
     if (this.registerForm.invalid) {

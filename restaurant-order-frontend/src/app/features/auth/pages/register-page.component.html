@@ -2,72 +2,78 @@
   <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
     <div class="mb-8 text-center">
       <h1 class="text-3xl font-bold text-slate-800">Crear cuenta</h1>
-      <p class="text-slate-500 mt-2">Restaurant Order System</p>
+      <p class="mt-2 text-slate-500">Restaurant Order System</p>
     </div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">
+        <label for="name" class="mb-1 block text-sm font-medium text-slate-700">
           Nombre
         </label>
         <input
+          id="name"
           type="text"
           formControlName="name"
-          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-500"
           placeholder="Tu nombre"
+          autocomplete="name"
         />
 
         @if (registerForm.get('name')?.touched && registerForm.get('name')?.invalid) {
-          <p class="text-red-500 text-sm mt-1">
+          <p class="mt-1 text-sm text-red-500">
             El nombre es obligatorio.
           </p>
         }
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">
+        <label for="email" class="mb-1 block text-sm font-medium text-slate-700">
           Correo electrónico
         </label>
         <input
+          id="email"
           type="email"
           formControlName="email"
-          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-500"
           placeholder="correo@ejemplo.com"
+          autocomplete="email"
         />
 
         @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
-          <p class="text-red-500 text-sm mt-1">
+          <p class="mt-1 text-sm text-red-500">
             Ingresa un correo válido.
           </p>
         }
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">
+        <label for="password" class="mb-1 block text-sm font-medium text-slate-700">
           Contraseña
         </label>
         <input
+          id="password"
           type="password"
           formControlName="password"
-          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-500"
           placeholder="********"
+          autocomplete="new-password"
         />
 
         @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
-          <p class="text-red-500 text-sm mt-1">
+          <p class="mt-1 text-sm text-red-500">
             La contraseña debe tener al menos 4 caracteres.
           </p>
         }
       </div>
 
       @if (errorMessage) {
-        <div class="rounded-xl bg-red-100 text-red-700 px-4 py-3 text-sm">
+        <div class="rounded-xl bg-red-100 px-4 py-3 text-sm text-red-700">
           {{ errorMessage }}
         </div>
       }
 
       @if (successMessage) {
-        <div class="rounded-xl bg-green-100 text-green-700 px-4 py-3 text-sm">
+        <div class="rounded-xl bg-green-100 px-4 py-3 text-sm text-green-700">
           {{ successMessage }}
         </div>
       }
@@ -75,13 +81,13 @@
       <button
         type="submit"
         [disabled]="isLoading"
-        class="w-full rounded-xl bg-slate-800 text-white py-3 font-semibold disabled:opacity-50"
+        class="w-full rounded-xl bg-slate-800 py-3 font-semibold text-white transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {{ isLoading ? 'Registrando...' : 'Registrarme' }}
       </button>
     </form>
 
-    <p class="text-sm text-center text-slate-600 mt-6">
+    <p class="mt-6 text-center text-sm text-slate-600">
       ¿Ya tienes cuenta?
       <a routerLink="/login" class="font-semibold text-slate-800 hover:underline">
         Inicia sesión

@@ -18,12 +18,11 @@ export const routes: Routes = [
     component: RegisterPageComponent
   },
   {
-    path: 'dashboard',
-    canActivate: [authGuard], 
-    loadComponent: () =>
-      import('./layout/pages/dashboard-page.component')
-        .then(m => m.DashboardPageComponent)
-  },
+  path: 'dashboard',
+  canActivate: [authGuard],
+  loadComponent: () =>
+    import('./layout/pages/dashboard-page.component').then(m => m.DashboardPageComponent)
+},
   {
     path: '**',
     redirectTo: 'login'

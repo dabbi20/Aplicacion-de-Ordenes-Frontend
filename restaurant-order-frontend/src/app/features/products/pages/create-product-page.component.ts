@@ -24,7 +24,8 @@ export class CreateProductPageComponent {
     name: ['', [Validators.required, Validators.minLength(2)]],
     description: ['', [Validators.required, Validators.minLength(3)]],
     price: [0, [Validators.required, Validators.min(0.01)]],
-    available: [true, [Validators.required]]
+    available: [true],
+    imageUrl: ['', [Validators.required]]
   });
 
   onSubmit(): void {
@@ -40,7 +41,8 @@ export class CreateProductPageComponent {
       name: this.productForm.value.name ?? '',
       description: this.productForm.value.description ?? '',
       price: Number(this.productForm.value.price ?? 0),
-      available: this.productForm.value.available ?? true
+      available: this.productForm.value.available ?? true,
+      imageUrl: this.productForm.value.imageUrl ?? ''
     };
 
     this.productService.createProduct(request).subscribe({

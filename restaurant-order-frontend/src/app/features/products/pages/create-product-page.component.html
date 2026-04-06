@@ -1,18 +1,14 @@
 <div class="min-h-screen bg-slate-100 px-4 py-8">
   <div class="mx-auto max-w-lg">
-    
-    <!-- Header -->
+
     <div class="mb-8 text-center">
       <h1 class="text-3xl font-bold text-slate-800">Crear producto</h1>
       <p class="mt-2 text-slate-500">Agrega un nuevo producto al sistema</p>
     </div>
 
-    <!-- Card -->
     <div class="rounded-2xl bg-white p-8 shadow-xl">
-
       <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
 
-        <!-- NAME -->
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">
             Nombre
@@ -24,33 +20,29 @@
             placeholder="Ej: Pizza"
           />
 
-          @if (productForm.get('name')?.touched && productForm.get('name')?.invalid) {
-            <p class="text-red-500 text-sm mt-1">
-              El nombre es obligatorio (mínimo 2 caracteres).
-            </p>
-          }
+          <p *ngIf="productForm.get('name')?.touched && productForm.get('name')?.invalid"
+             class="mt-1 text-sm text-red-500">
+            El nombre es obligatorio.
+          </p>
         </div>
 
-        <!-- DESCRIPTION -->
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">
             Descripción
           </label>
           <textarea
             formControlName="description"
-            class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-slate-500"
             rows="3"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-slate-500"
             placeholder="Descripción del producto"
           ></textarea>
 
-          @if (productForm.get('description')?.touched && productForm.get('description')?.invalid) {
-            <p class="text-red-500 text-sm mt-1">
-              La descripción es obligatoria (mínimo 3 caracteres).
-            </p>
-          }
+          <p *ngIf="productForm.get('description')?.touched && productForm.get('description')?.invalid"
+             class="mt-1 text-sm text-red-500">
+            La descripción es obligatoria.
+          </p>
         </div>
 
-        <!-- PRICE -->
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">
             Precio
@@ -62,14 +54,29 @@
             placeholder="Ej: 25"
           />
 
-          @if (productForm.get('price')?.touched && productForm.get('price')?.invalid) {
-            <p class="text-red-500 text-sm mt-1">
-              El precio debe ser mayor a 0.
-            </p>
-          }
+          <p *ngIf="productForm.get('price')?.touched && productForm.get('price')?.invalid"
+             class="mt-1 text-sm text-red-500">
+            El precio debe ser mayor a 0.
+          </p>
         </div>
 
-        <!-- AVAILABLE -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">
+            URL de la imagen
+          </label>
+          <input
+            type="text"
+            formControlName="imageUrl"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-slate-500"
+            placeholder="https://..."
+          />
+
+          <p *ngIf="productForm.get('imageUrl')?.touched && productForm.get('imageUrl')?.invalid"
+             class="mt-1 text-sm text-red-500">
+            La imagen es obligatoria.
+          </p>
+        </div>
+
         <div class="flex items-center gap-3">
           <input
             type="checkbox"
@@ -81,25 +88,18 @@
           </label>
         </div>
 
-        <!-- ERROR -->
-        @if (errorMessage) {
-          <div class="rounded-xl bg-red-100 text-red-700 px-4 py-3 text-sm">
-            {{ errorMessage }}
-          </div>
-        }
+        <div *ngIf="errorMessage" class="rounded-xl bg-red-100 text-red-700 px-4 py-3 text-sm">
+          {{ errorMessage }}
+        </div>
 
-        <!-- BUTTONS -->
         <div class="flex gap-3 pt-4">
-
-          <!-- CANCEL -->
           <a
             routerLink="/products"
-            class="w-1/2 text-center rounded-xl border border-slate-300 py-3 font-semibold text-slate-700 hover:bg-slate-100"
+            class="w-1/2 rounded-xl border border-slate-300 py-3 text-center font-semibold text-slate-700 hover:bg-slate-100"
           >
             Cancelar
           </a>
 
-          <!-- SUBMIT -->
           <button
             type="submit"
             [disabled]="isLoading"
@@ -107,11 +107,9 @@
           >
             {{ isLoading ? 'Guardando...' : 'Guardar' }}
           </button>
-
         </div>
 
       </form>
-
     </div>
   </div>
 </div>

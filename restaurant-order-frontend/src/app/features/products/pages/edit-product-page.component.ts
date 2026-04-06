@@ -28,7 +28,8 @@ export class EditProductPageComponent implements OnInit {
     name: ['', [Validators.required, Validators.minLength(2)]],
     description: ['', [Validators.required, Validators.minLength(3)]],
     price: [0, [Validators.required, Validators.min(0.01)]],
-    available: [true]
+    available: [true],
+    imageUrl: ['', [Validators.required]]
   });
 
   ngOnInit(): void {
@@ -56,7 +57,8 @@ export class EditProductPageComponent implements OnInit {
           name: product.name,
           description: product.description,
           price: product.price,
-          available: product.available
+          available: product.available,
+          imageUrl: product.imageUrl
         });
 
         this.isLoading = false;
@@ -84,7 +86,8 @@ export class EditProductPageComponent implements OnInit {
       name: this.productForm.value.name ?? '',
       description: this.productForm.value.description ?? '',
       price: Number(this.productForm.value.price ?? 0),
-      available: this.productForm.value.available ?? true
+      available: this.productForm.value.available ?? true,
+      imageUrl: this.productForm.value.imageUrl ?? ''
     };
 
     this.productService.updateProduct(this.productId, request).subscribe({

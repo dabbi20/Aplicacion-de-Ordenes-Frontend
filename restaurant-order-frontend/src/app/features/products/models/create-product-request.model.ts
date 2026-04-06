@@ -3,4 +3,5 @@ export interface CreateProductRequest {
   description: string;
   price: number;
   available: boolean;
+  imageUrl: string;
 }

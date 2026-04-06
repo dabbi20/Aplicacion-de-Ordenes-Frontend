@@ -5,7 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { Product } from '../models/product.model';
 import { SessionService } from '../../../core/services/session.service';
-
+import { CartService } from '../../cart/service/cart.service';
 @Component({
   selector: 'app-products-page',
   standalone: true,
@@ -17,6 +17,7 @@ export class ProductsPageComponent implements OnInit {
   private sessionService = inject(SessionService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+private cartService = inject(CartService);
 
   products: Product[] = [];
   isLoading = false;
@@ -25,6 +26,10 @@ export class ProductsPageComponent implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
   }
+  addToCart(product: Product) {
+  this.cartService.addToCart(product);
+  alert('Producto agregado al carrito');
+}
 
   loadProducts(): void {
     this.isLoading = true;

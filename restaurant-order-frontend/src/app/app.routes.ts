@@ -7,7 +7,7 @@ import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
-    path: '', 
+    path: '',
     redirectTo: 'login',
     pathMatch: 'full'
   },
@@ -35,6 +35,14 @@ export const routes: Routes = [
     component: CreateProductPageComponent,
     canActivate: [authGuard]
   },
+
+  // 🔒 Lo dejamos comentado hasta crear bien el edit
+  // {
+  //   path: 'products/edit/:id',
+  //   component: EditProductPageComponent,
+  //   canActivate: [authGuard]
+  // },
+
   {
     path: '**',
     redirectTo: 'login'

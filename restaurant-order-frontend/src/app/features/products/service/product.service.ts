@@ -16,7 +16,15 @@ export class ProductService {
     return this.http.get<Product[]>(this.baseUrl);
   }
 
+  getProductById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.baseUrl}/${id}`);
+  }
+
   createProduct(request: CreateProductRequest): Observable<Product> {
     return this.http.post<Product>(this.baseUrl, request);
+  }
+
+  updateProduct(id: number, request: CreateProductRequest): Observable<Product> {
+    return this.http.put<Product>(`${this.baseUrl}/${id}`, request);
   }
 }

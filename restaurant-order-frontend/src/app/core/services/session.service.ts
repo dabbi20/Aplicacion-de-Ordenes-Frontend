@@ -18,4 +18,23 @@ export class SessionService {
   logout(): void {
     this.storageService.removeToken();
   }
+
+ getRole(): string | null {
+  const token = this.getToken();
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role ?? null;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return null;
+  }
 }
+
+isAdmin(): boolean {
+  return this.getRole() === 'ADMIN';
+}}

@@ -2,14 +2,22 @@
 
   <!-- HEADER -->
   <div class="flex justify-between items-center mb-8">
+
     <div>
       <h1 class="text-3xl font-bold text-slate-800">Productos</h1>
       <p class="text-slate-500">Listado de productos disponibles</p>
     </div>
 
-    <div class="flex gap-3">
+    <div class="flex items-center gap-3">
 
-      <!-- BOTÓN CREAR (SOLO ADMIN) -->
+      <!-- ROLE BADGE -->
+      <span
+        class="rounded-full bg-slate-200 px-3 py-1 text-sm font-semibold text-slate-700"
+      >
+        {{ getRole() }}
+      </span>
+
+      <!-- CREAR (SOLO ADMIN) -->
       <a
         *ngIf="isAdmin()"
         routerLink="/products/create"
@@ -25,17 +33,18 @@
       >
         Cerrar sesión
       </button>
+
     </div>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="errorMessage" class="bg-red-100 text-red-700 p-4 rounded-xl mb-6">
+    {{ errorMessage }}
   </div>
 
   <!-- LOADING -->
   <div *ngIf="isLoading" class="bg-white p-6 rounded-xl text-center shadow">
     Cargando productos...
-  </div>
-
-  <!-- ERROR -->
-  <div *ngIf="errorMessage" class="bg-red-100 text-red-700 p-4 rounded-xl">
-    {{ errorMessage }}
   </div>
 
   <!-- LISTA -->
@@ -48,6 +57,7 @@
       *ngFor="let product of products"
       class="bg-white rounded-2xl p-6 shadow hover:shadow-lg transition"
     >
+
       <div class="flex justify-between items-center mb-2">
         <h2 class="text-xl font-bold text-slate-800">
           {{ product.name }}
@@ -63,19 +73,35 @@
       </p>
 
       <div class="flex justify-between items-center">
+
         <span class="text-lg font-semibold">
           $ {{ product.price }}
         </span>
 
-        <!-- EDITAR SOLO ADMIN -->
-        <button
-          *ngIf="isAdmin()"
-          (click)="editProduct(product.id)"
-          class="text-sm bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition"
-        >
-          Editar
-        </button>
+        <div class="flex gap-2">
+
+          <!-- EDITAR -->
+          <button
+            *ngIf="isAdmin()"
+            (click)="editProduct(product.id)"
+            class="text-sm bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition"
+          >
+            Editar
+          </button>
+
+          <!-- ELIMINAR -->
+          <button
+            *ngIf="isAdmin()"
+            (click)="deleteProduct(product.id)"
+            class="text-sm bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
+          >
+            Eliminar
+          </button>
+
+        </div>
+
       </div>
+
     </div>
 
   </div>

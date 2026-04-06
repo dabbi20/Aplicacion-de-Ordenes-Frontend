@@ -23,16 +23,8 @@ export class ProductsPageComponent implements OnInit {
   errorMessage = '';
 
   ngOnInit(): void {
-  console.log('TOKEN:', this.sessionService.getToken());
-  console.log('ROLE ACTUAL:', this.sessionService.getRole());
-
-  const token = this.sessionService.getToken();
-  if (token) {
-    console.log('PAYLOAD JWT:', JSON.parse(atob(token.split('.')[1])));
+    this.loadProducts();
   }
-
-  this.loadProducts();
-}
 
   loadProducts(): void {
     this.isLoading = true;
@@ -59,8 +51,33 @@ export class ProductsPageComponent implements OnInit {
     return this.sessionService.isAdmin();
   }
 
+  getRole(): string {
+    return this.sessionService.getRole() ?? 'SIN ROL';
+  }
+
   editProduct(id: number): void {
     this.router.navigate(['/products/edit', id]);
+  }
+
+  deleteProduct(id: number): void {
+    const confirmed = window.confirm('¿Seguro que deseas eliminar este producto?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.productService.deleteProduct(id).subscribe({
+      next: () => {
+        this.errorMessage = '';
+        this.loadProducts();
+      },
+      error: (error) => {
+        console.error('Error deleting product:', error);
+        this.errorMessage =
+          error?.error?.message || 'No se pudo eliminar el producto';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   logout(): void {

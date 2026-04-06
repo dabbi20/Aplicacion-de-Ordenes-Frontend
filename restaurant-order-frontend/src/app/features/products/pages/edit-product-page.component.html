@@ -1,0 +1,93 @@
+<div class="min-h-screen bg-slate-100 px-4 py-8">
+  <div class="mx-auto max-w-lg">
+    <div class="mb-8 text-center">
+      <h1 class="text-3xl font-bold text-slate-800">Editar producto</h1>
+      <p class="mt-2 text-slate-500">Actualiza la información del producto</p>
+    </div>
+
+    <div class="rounded-2xl bg-white p-8 shadow-xl">
+      <div *ngIf="isLoading" class="text-center text-slate-500">
+        Cargando producto...
+      </div>
+
+      <div *ngIf="errorMessage" class="mb-4 rounded-xl bg-red-100 px-4 py-3 text-sm text-red-700">
+        {{ errorMessage }}
+      </div>
+
+      <form *ngIf="!isLoading" [formGroup]="productForm" (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
+        <div>
+          <label class="mb-1 block text-sm font-medium text-slate-700">
+            Nombre
+          </label>
+          <input
+            type="text"
+            formControlName="name"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-500"
+            placeholder="Nombre del producto"
+          />
+
+          <p *ngIf="productForm.get('name')?.touched && productForm.get('name')?.invalid"
+             class="mt-1 text-sm text-red-500">
+            El nombre es obligatorio.
+          </p>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-slate-700">
+            Descripción
+          </label>
+          <textarea
+            formControlName="description"
+            rows="3"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-500"
+            placeholder="Descripción del producto"
+          ></textarea>
+
+          <p *ngIf="productForm.get('description')?.touched && productForm.get('description')?.invalid"
+             class="mt-1 text-sm text-red-500">
+            La descripción es obligatoria.
+          </p>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-slate-700">
+            Precio
+          </label>
+          <input
+            type="number"
+            formControlName="price"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-500"
+            placeholder="0"
+          />
+
+          <p *ngIf="productForm.get('price')?.touched && productForm.get('price')?.invalid"
+             class="mt-1 text-sm text-red-500">
+            El precio debe ser mayor a 0.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <input type="checkbox" formControlName="available" class="h-4 w-4" />
+          <label class="text-sm text-slate-700">Disponible</label>
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <a
+            routerLink="/products"
+            class="w-1/2 rounded-xl border border-slate-300 py-3 text-center font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            Cancelar
+          </a>
+
+          <button
+            type="submit"
+            [disabled]="isSaving"
+            class="w-1/2 rounded-xl bg-slate-800 py-3 font-semibold text-white transition hover:bg-slate-900 disabled:opacity-50"
+          >
+            {{ isSaving ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

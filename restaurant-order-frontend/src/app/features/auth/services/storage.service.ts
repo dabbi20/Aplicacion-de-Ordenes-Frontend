@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class StorageService {
 
   private TOKEN_KEY = 'auth_token';
+  private USER_KEY = 'user';
 
   setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
@@ -17,26 +18,29 @@ export class StorageService {
 
   removeToken(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
   }
 
   isLoggedIn(): boolean {
-  return !!localStorage.getItem('token');
-}
+    return !!this.getToken();
+  }
 
-logout(): void {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-}
+  logout(): void {
+    this.removeToken();
+  }
 
-getUserRole(): string | null {
-  const user = localStorage.getItem('user');
-  if (!user) return null;
-  return JSON.parse(user).role ?? null;
-}
+  getUserRole(): string | null {
+    const user = localStorage.getItem(this.USER_KEY);
+    if (!user) return null;
 
-getUserName(): string | null {
-  const user = localStorage.getItem('user');
-  if (!user) return null;
-  return JSON.parse(user).username ?? JSON.parse(user).name ?? null;
-}
+    return JSON.parse(user).role ?? null;
+  }
+
+  getUserName(): string | null {
+    const user = localStorage.getItem(this.USER_KEY);
+    if (!user) return null;
+
+    const parsed = JSON.parse(user);
+    return parsed.username ?? parsed.name ?? null;
+  }
 }

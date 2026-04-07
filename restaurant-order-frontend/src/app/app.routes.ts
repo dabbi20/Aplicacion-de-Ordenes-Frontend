@@ -3,8 +3,11 @@ import { LoginPageComponent } from './features/auth/pages/login-page.component';
 import { RegisterPageComponent } from './features/auth/pages/register-page.component';
 import { ProductsPageComponent } from './features/products/pages/products-page.component';
 import { CreateProductPageComponent } from './features/products/pages/create-product-page.component';
-import { authGuard } from './core/guards/auth.guard';
 import { EditProductPageComponent } from './features/products/pages/edit-product-page.component';
+import { OrdersPageComponent } from './features/orders/pages/orders-page.component';
+import { CartPageComponent } from './features/cart/pages/cart-page.component';
+import { authGuard } from './core/guards/auth.guard';
+import { AppShellComponent } from './layout/pages/app-shell.component';
 
 export const routes: Routes = [
   {
@@ -21,28 +24,37 @@ export const routes: Routes = [
     component: RegisterPageComponent
   },
   {
-    path: 'dashboard',
+    path: '',
+    component: AppShellComponent,
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./layout/pages/dashboard-page.component').then(m => m.DashboardPageComponent)
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./layout/pages/dashboard-page.component').then(m => m.DashboardPageComponent)
+      },
+      {
+        path: 'products',
+        component: ProductsPageComponent
+      },
+      {
+        path: 'products/create',
+        component: CreateProductPageComponent
+      },
+      {
+        path: 'products/edit/:id',
+        component: EditProductPageComponent
+      },
+      {
+        path: 'orders',
+        component: OrdersPageComponent
+      },
+      {
+        path: 'cart',
+        component: CartPageComponent
+      }
+    ]
   },
-  {
-    path: 'products',
-    component: ProductsPageComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'products/create',
-    component: CreateProductPageComponent,
-    canActivate: [authGuard]
-  },
-
-   {
-    path: 'products/edit/:id',
-   component: EditProductPageComponent,
-     canActivate: [authGuard]
-   },
-
   {
     path: '**',
     redirectTo: 'login'

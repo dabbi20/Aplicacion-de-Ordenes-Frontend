@@ -1,22 +1,21 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { ProductService } from '../service/product.service';
 import { Product } from '../models/product.model';
 import { SessionService } from '../../../core/services/session.service';
-import { CartItem, CartService } from '../../cart/service/cart.service';
 
 @Component({
   selector: 'app-products-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './products-page.component.html'
 })
 export class ProductsPageComponent implements OnInit {
   private productService = inject(ProductService);
   private sessionService = inject(SessionService);
-  private cartService = inject(CartService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
@@ -24,7 +23,6 @@ export class ProductsPageComponent implements OnInit {
   cartItems: CartItem[] = [];
   isLoading = false;
   errorMessage = '';
-  isCartOpen = false;
 
   ngOnInit(): void {
     this.loadProducts();
@@ -57,43 +55,6 @@ export class ProductsPageComponent implements OnInit {
 
   isAdmin(): boolean {
     return this.sessionService.isAdmin();
-  }
-
-  getRole(): string {
-    return this.sessionService.getRole() ?? 'SIN ROL';
-  }
-
-  addToCart(product: Product): void {
-    this.cartService.addToCart(product);
-    this.isCartOpen = true;
-  }
-
-  getCartCount(): number {
-    return this.cartService.getCount();
-  }
-
-  getCartTotal(): number {
-    return this.cartService.getTotal();
-  }
-
-  toggleCart(): void {
-    this.isCartOpen = !this.isCartOpen;
-  }
-
-  increaseQuantity(productId: number): void {
-    this.cartService.increaseQuantity(productId);
-  }
-
-  decreaseQuantity(productId: number): void {
-    this.cartService.decreaseQuantity(productId);
-  }
-
-  removeFromCart(productId: number): void {
-    this.cartService.removeFromCart(productId);
-  }
-
-  clearCart(): void {
-    this.cartService.clearCart();
   }
 
   editProduct(id: number): void {

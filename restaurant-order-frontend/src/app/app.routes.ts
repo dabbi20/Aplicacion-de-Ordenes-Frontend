@@ -4,6 +4,7 @@ import { RegisterPageComponent } from './features/auth/pages/register-page.compo
 import { ProductsPageComponent } from './features/products/pages/products-page.component';
 import { CreateProductPageComponent } from './features/products/pages/create-product-page.component';
 import { authGuard } from './core/guards/auth.guard';
+import { EditProductPageComponent } from './features/products/pages/edit-product-page.component';
 
 export const routes: Routes = [
   {
@@ -36,12 +37,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
-  // 🔒 Lo dejamos comentado hasta crear bien el edit
-  // {
-  //   path: 'products/edit/:id',
-  //   component: EditProductPageComponent,
-  //   canActivate: [authGuard]
-  // },
+   {
+    path: 'products/edit/:id',
+   component: EditProductPageComponent,
+     canActivate: [authGuard]
+   },
 
   {
     path: '**',

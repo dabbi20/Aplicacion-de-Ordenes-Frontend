@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { Product } from '../models/product.model';
 import { SessionService } from '../../../core/services/session.service';
+import { CartItem, CartService } from '../../cart/service/cart.service';
 
 @Component({
   selector: 'app-products-page',
@@ -15,24 +16,24 @@ import { SessionService } from '../../../core/services/session.service';
 export class ProductsPageComponent implements OnInit {
   private productService = inject(ProductService);
   private sessionService = inject(SessionService);
+  private cartService = inject(CartService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
   products: Product[] = [];
+  cartItems: CartItem[] = [];
   isLoading = false;
   errorMessage = '';
+  isCartOpen = false;
 
   ngOnInit(): void {
-  console.log('TOKEN:', this.sessionService.getToken());
-  console.log('ROLE ACTUAL:', this.sessionService.getRole());
+    this.loadProducts();
 
-  const token = this.sessionService.getToken();
-  if (token) {
-    console.log('PAYLOAD JWT:', JSON.parse(atob(token.split('.')[1])));
+    this.cartService.items$.subscribe(items => {
+      this.cartItems = items;
+      this.cdr.detectChanges();
+    });
   }
-
-  this.loadProducts();
-}
 
   loadProducts(): void {
     this.isLoading = true;
@@ -40,7 +41,6 @@ export class ProductsPageComponent implements OnInit {
 
     this.productService.getProducts().subscribe({
       next: (response) => {
-        console.log('Productos cargados:', response);
         this.products = response;
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -59,8 +59,66 @@ export class ProductsPageComponent implements OnInit {
     return this.sessionService.isAdmin();
   }
 
+  getRole(): string {
+    return this.sessionService.getRole() ?? 'SIN ROL';
+  }
+
+  addToCart(product: Product): void {
+    this.cartService.addToCart(product);
+    this.isCartOpen = true;
+  }
+
+  getCartCount(): number {
+    return this.cartService.getCount();
+  }
+
+  getCartTotal(): number {
+    return this.cartService.getTotal();
+  }
+
+  toggleCart(): void {
+    this.isCartOpen = !this.isCartOpen;
+  }
+
+  increaseQuantity(productId: number): void {
+    this.cartService.increaseQuantity(productId);
+  }
+
+  decreaseQuantity(productId: number): void {
+    this.cartService.decreaseQuantity(productId);
+  }
+
+  removeFromCart(productId: number): void {
+    this.cartService.removeFromCart(productId);
+  }
+
+  clearCart(): void {
+    this.cartService.clearCart();
+  }
+
   editProduct(id: number): void {
     this.router.navigate(['/products/edit', id]);
+  }
+
+  deleteProduct(id: number): void {
+    const confirmed = window.confirm('¿Seguro que deseas eliminar este producto?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.productService.deleteProduct(id).subscribe({
+      next: () => {
+        this.errorMessage = '';
+        this.loadProducts();
+      },
+      error: (error) => {
+        console.error('Error deleting product:', error);
+        this.errorMessage =
+          error?.error?.message || 'No se pudo eliminar el producto';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   logout(): void {

@@ -6,16 +6,29 @@ import { Router, RouterLink } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { Product } from '../models/product.model';
 import { SessionService } from '../../../core/services/session.service';
+import { CartItem, CartService } from '../../cart/service/cart.service';
+import { OrderService } from '../../orders/services/order.service';
+import { CreateOrderRequest } from '../../orders/models/create-order-request.model';
+import { NavbarComponent } from '../../../layout/components/NavbarComponent/navbar.component';
+import { FooterComponent } from '../../../layout/components/FooterComponent/footer.component';
 
 @Component({
   selector: 'app-products-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    FormsModule,
+    NavbarComponent,
+    FooterComponent
+  ],
   templateUrl: './products-page.component.html'
 })
 export class ProductsPageComponent implements OnInit {
   private productService = inject(ProductService);
   private sessionService = inject(SessionService);
+  private cartService = inject(CartService);
+  private orderService = inject(OrderService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
@@ -23,6 +36,9 @@ export class ProductsPageComponent implements OnInit {
   cartItems: CartItem[] = [];
   isLoading = false;
   errorMessage = '';
+  isCartOpen = false;
+
+  selectedPaymentType: 'CASH' | 'CARD' | 'TRANSFER' = 'CASH';
 
   ngOnInit(): void {
     this.loadProducts();
@@ -55,6 +71,77 @@ export class ProductsPageComponent implements OnInit {
 
   isAdmin(): boolean {
     return this.sessionService.isAdmin();
+  }
+
+  getRole(): string {
+    return this.sessionService.getRole() ?? 'SIN ROL';
+  }
+
+  addToCart(product: Product): void {
+    this.cartService.addToCart(product);
+    this.isCartOpen = true;
+  }
+
+  getCartCount(): number {
+    return this.cartService.getCount();
+  }
+
+  getCartTotal(): number {
+    return this.cartService.getTotal();
+  }
+
+  toggleCart(): void {
+    this.isCartOpen = !this.isCartOpen;
+  }
+
+  increaseQuantity(productId: number): void {
+    this.cartService.increaseQuantity(productId);
+  }
+
+  decreaseQuantity(productId: number): void {
+    this.cartService.decreaseQuantity(productId);
+  }
+
+  removeFromCart(productId: number): void {
+    this.cartService.removeFromCart(productId);
+  }
+
+  clearCart(): void {
+    this.cartService.clearCart();
+  }
+
+  checkout(): void {
+    if (this.cartItems.length === 0) {
+      this.errorMessage = 'El carrito está vacío';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const request: CreateOrderRequest = {
+      userId: 1,
+      paymentType: this.selectedPaymentType,
+      items: this.cartItems.map(item => ({
+        productId: item.product.id,
+        quantity: item.quantity
+      }))
+    };
+
+    this.orderService.createOrder(request).subscribe({
+      next: (response) => {
+        console.log('Orden creada correctamente:', response);
+        this.errorMessage = '';
+        this.cartService.clearCart();
+        this.isCartOpen = false;
+        alert('Orden creada correctamente');
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error creating order:', error);
+        this.errorMessage =
+          error?.error?.message || 'No se pudo crear la orden';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   editProduct(id: number): void {

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { ProductService } from '../service/product.service';
 import { Product } from '../models/product.model';
@@ -9,28 +9,23 @@ import { SessionService } from '../../../core/services/session.service';
 import { CartItem, CartService } from '../../cart/service/cart.service';
 import { OrderService } from '../../orders/services/order.service';
 import { CreateOrderRequest } from '../../orders/models/create-order-request.model';
-import { NavbarComponent } from '../../../layout/components/NavbarComponent/navbar.component';
-import { FooterComponent } from '../../../layout/components/FooterComponent/footer.component';
 
 @Component({
   selector: 'app-products-page',
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
-    FormsModule,
-    NavbarComponent,
-    FooterComponent
+    FormsModule
   ],
   templateUrl: './products-page.component.html'
 })
 export class ProductsPageComponent implements OnInit {
-  private productService = inject(ProductService);
-  private sessionService = inject(SessionService);
-  private cartService = inject(CartService);
-  private orderService = inject(OrderService);
-  private router = inject(Router);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly productService = inject(ProductService);
+  private readonly sessionService = inject(SessionService);
+  private readonly cartService = inject(CartService);
+  private readonly orderService = inject(OrderService);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   products: Product[] = [];
   cartItems: CartItem[] = [];
@@ -43,7 +38,7 @@ export class ProductsPageComponent implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
 
-    this.cartService.items$.subscribe(items => {
+    this.cartService.items$.subscribe((items: CartItem[]) => {
       this.cartItems = items;
       this.cdr.detectChanges();
     });
@@ -71,10 +66,6 @@ export class ProductsPageComponent implements OnInit {
 
   isAdmin(): boolean {
     return this.sessionService.isAdmin();
-  }
-
-  getRole(): string {
-    return this.sessionService.getRole() ?? 'SIN ROL';
   }
 
   addToCart(product: Product): void {
@@ -121,7 +112,7 @@ export class ProductsPageComponent implements OnInit {
       userId: 1,
       paymentType: this.selectedPaymentType,
       items: this.cartItems.map(item => ({
-        productId: item.product.id,
+        productId: item.productId,
         quantity: item.quantity
       }))
     };
@@ -167,10 +158,5 @@ export class ProductsPageComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
-  }
-
-  logout(): void {
-    this.sessionService.logout();
-    this.router.navigate(['/login']);
   }
 }

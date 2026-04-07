@@ -1,26 +1,62 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { CartService } from '../../../features/cart/service/cart.service';
+import { SessionService } from '../../../core/services/session.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent {
-  @Input() role: string = 'SIN ROL';
-  @Input() cartCount: number = 0;
-  @Input() isAdmin: boolean = false;
+  private readonly router = inject(Router);
+  private readonly cartService = inject(CartService);
+  private readonly sessionService = inject(SessionService);
 
-  @Output() cartClicked = new EventEmitter<void>();
-  @Output() logoutClicked = new EventEmitter<void>();
+  mobileMenuOpen = signal(false);
 
-  onCartClick(): void {
-    this.cartClicked.emit();
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen.update(value => !value);
   }
 
-  onLogoutClick(): void {
-    this.logoutClicked.emit();
+  closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
+  }
+
+  goToCart(): void {
+    this.router.navigate(['/cart']);
+  }
+
+  goToCartFromMobile(): void {
+    this.closeMobileMenu();
+    this.router.navigate(['/cart']);
+  }
+
+  logout(): void {
+    this.sessionService.logout();
+    this.closeMobileMenu();
+    this.router.navigate(['/login']);
+  }
+
+  get cartCount(): number {
+    return this.cartService.getCount();
+  }
+
+  get isLoggedIn(): boolean {
+    return this.sessionService.isLoggedIn();
+  }
+
+  get username(): string {
+    return this.sessionService.getUsername() || 'Usuario';
+  }
+
+  get roleLabel(): string {
+    return this.sessionService.getRole() || 'CLIENT';
+  }
+
+  get isAdmin(): boolean {
+    return this.sessionService.isAdmin();
   }
 }

@@ -19,22 +19,43 @@ export class SessionService {
     this.storageService.removeToken();
   }
 
- getRole(): string | null {
-  const token = this.getToken();
+  getRole(): string | null {
+    const token = this.getToken();
 
-  if (!token) {
-    return null;
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role ?? null;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
   }
 
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.role ?? null;
-  } catch (error) {
-    console.error('Error decoding token:', error);
-    return null;
+  getUserName(): string | null {
+    return this.getUsername();
+  }
+
+  getUsername(): string | null {
+    const rawUser = localStorage.getItem('user');
+
+    if (!rawUser) {
+      return null;
+    }
+
+    try {
+      const user = JSON.parse(rawUser);
+      return user.username || user.name || null;
+    } catch (error) {
+      console.error('Error parsing user from localStorage:', error);
+      return null;
+    }
+  }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'ADMIN';
   }
 }
-
-isAdmin(): boolean {
-  return this.getRole() === 'ADMIN';
-}}

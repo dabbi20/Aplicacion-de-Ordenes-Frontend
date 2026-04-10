@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { OrderResponse } from '../models/order.model';
+import { FormsModule } from '@angular/forms';
+import { OrderResponse, OrderStatus } from '../models/order.model';
 import { OrderService } from '../services/order.service';
 
 @Component({
-  selector: 'app-orders-page',
+  selector: 'app-admin-orders-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <section class="mx-auto max-w-7xl px-6 py-8">
       <div class="mb-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-slate-800">Mis pedidos</h1>
+          <h1 class="text-3xl font-bold text-slate-800">Órdenes</h1>
           <p class="text-slate-500">
-            Aquí puedes revisar el estado y el detalle de tus compras.
+            Panel administrativo para visualizar y gestionar pedidos.
           </p>
         </div>
 
@@ -34,14 +35,14 @@ import { OrderService } from '../services/order.service';
       </div>
 
       <div *ngIf="isLoading" class="rounded-2xl bg-white p-8 text-center shadow-sm">
-        <p class="text-slate-600">Cargando tus pedidos...</p>
+        <p class="text-slate-600">Cargando órdenes...</p>
       </div>
 
       <div
         *ngIf="!isLoading && orders.length === 0"
         class="rounded-2xl bg-white p-8 text-center shadow-sm"
       >
-        <p class="text-slate-600">Todavía no tienes pedidos registrados.</p>
+        <p class="text-slate-600">No hay órdenes registradas todavía.</p>
       </div>
 
       <div *ngIf="!isLoading && orders.length > 0" class="space-y-6">
@@ -50,32 +51,56 @@ import { OrderService } from '../services/order.service';
           class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
         >
           <div class="border-b border-slate-200 px-6 py-4">
-            <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-              <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Orden</p>
-                <p class="text-sm font-bold text-slate-800">#{{ order.orderId }}</p>
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Orden</p>
+                  <p class="text-sm font-bold text-slate-800">#{{ order.orderId }}</p>
+                </div>
+
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Cliente</p>
+                  <p class="text-sm font-medium text-slate-800">
+                    {{ order.userName || ('Usuario #' + order.userId) }}
+                  </p>
+                </div>
+
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Pago</p>
+                  <p class="text-sm font-medium text-slate-800">{{ order.paymentType }}</p>
+                </div>
+
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Fecha</p>
+                  <p class="text-sm font-medium text-slate-800">
+                    {{ order.createdAt ? (order.createdAt | date:'short') : 'Sin fecha' }}
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Pago</p>
-                <p class="text-sm font-medium text-slate-800">{{ order.paymentType }}</p>
-              </div>
-
-              <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Fecha</p>
-                <p class="text-sm font-medium text-slate-800">
-                  {{ order.createdAt ? (order.createdAt | date:'short') : 'Sin fecha' }}
-                </p>
-              </div>
-
-              <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Estado</p>
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <span
                   class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-semibold"
                   [ngClass]="getStatusClasses(order.status)"
                 >
                   {{ order.status }}
                 </span>
+
+                <div class="min-w-[180px]">
+                  <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Cambiar estado
+                  </label>
+
+                  <select
+                    class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+                    [ngModel]="order.status"
+                    (ngModelChange)="changeStatus(order.orderId, $event)"
+                  >
+                    <option value="CREATED">CREATED</option>
+                    <option value="PREPARING">PREPARING</option>
+                    <option value="DELIVERED">DELIVERED</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -124,7 +149,7 @@ import { OrderService } from '../services/order.service';
     </section>
   `
 })
-export class OrdersPageComponent implements OnInit {
+export class AdminOrdersPageComponent implements OnInit {
   private readonly orderService = inject(OrderService);
 
   orders: OrderResponse[] = [];
@@ -139,21 +164,36 @@ export class OrdersPageComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.orderService.getMyOrders().subscribe({
+    this.orderService.getAllOrders().subscribe({
       next: (response) => {
         this.orders = response;
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error loading my orders:', error);
+        console.error('Error loading admin orders:', error);
         this.errorMessage =
-          error?.error?.message || 'No se pudieron cargar tus pedidos';
+          error?.error?.message || 'No se pudieron cargar las órdenes';
         this.isLoading = false;
       }
     });
   }
 
-  getStatusClasses(status: string): string {
+  changeStatus(orderId: number, status: OrderStatus): void {
+    this.orderService.updateOrderStatus(orderId, status).subscribe({
+      next: (updatedOrder) => {
+        this.orders = this.orders.map(order =>
+          order.orderId === updatedOrder.orderId ? updatedOrder : order
+        );
+      },
+      error: (error) => {
+        console.error('Error updating order status:', error);
+        this.errorMessage =
+          error?.error?.message || 'No se pudo actualizar el estado de la orden';
+      }
+    });
+  }
+
+  getStatusClasses(status: OrderStatus): string {
     switch (status) {
       case 'CREATED':
         return 'bg-blue-100 text-blue-700';

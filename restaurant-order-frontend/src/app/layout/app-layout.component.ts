@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/NavbarComponent/navbar.component';
 import { FooterComponent } from './components/FooterComponent/footer.component';
-import { SuccessModalComponent } from './components/success-modal/success-modal.component';
+import { ModalComponent } from '../shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-layout',
@@ -13,7 +13,7 @@ import { SuccessModalComponent } from './components/success-modal/success-modal.
     RouterOutlet,
     NavbarComponent,
     FooterComponent,
-    SuccessModalComponent
+    ModalComponent
   ],
   template: `
     <div class="min-h-screen bg-slate-50 text-slate-900">
@@ -24,7 +24,7 @@ import { SuccessModalComponent } from './components/success-modal/success-modal.
       </main>
 
       <app-footer></app-footer>
-      <app-success-modal></app-success-modal>
+      <app-modal></app-modal>
     </div>
   `
 })

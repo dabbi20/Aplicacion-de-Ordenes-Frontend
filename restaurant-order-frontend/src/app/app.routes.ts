@@ -7,7 +7,9 @@ import { EditProductPageComponent } from './features/products/pages/edit-product
 import { OrdersPageComponent } from './features/orders/pages/orders-page.component';
 import { CartPageComponent } from './features/cart/pages/cart-page.component';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 import { AppLayoutComponent } from './layout/app-layout.component';
+import { AdminOrdersPageComponent } from './features/orders/pages/admin-orders-page.component';
 
 export const routes: Routes = [
   {
@@ -29,6 +31,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: '',
+        redirectTo: 'products',
+        pathMatch: 'full'
+      },
+      {
         path: 'dashboard',
         loadComponent: () =>
           import('./layout/pages/dashboard-page.component').then(m => m.DashboardPageComponent)
@@ -48,6 +55,11 @@ export const routes: Routes = [
       {
         path: 'orders',
         component: OrdersPageComponent
+      },
+      {
+        path: 'admin/orders',
+        component: AdminOrdersPageComponent,
+        canActivate: [adminGuard]
       },
       {
         path: 'cart',

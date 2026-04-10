@@ -1,7 +1,6 @@
 <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
   <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
 
-    <!-- Brand -->
     <a routerLink="/products" class="flex items-center gap-3">
       <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white font-bold shadow-sm">
         R
@@ -17,7 +16,6 @@
       </div>
     </a>
 
-    <!-- Navegación desktop -->
     <div class="hidden items-center gap-2 md:flex">
       <a
         routerLink="/products"
@@ -29,6 +27,7 @@
       </a>
 
       <a
+        *ngIf="!isAdmin()"
         routerLink="/orders"
         routerLinkActive="bg-slate-900 text-white"
         class="rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
@@ -42,14 +41,11 @@
         routerLinkActive="bg-slate-900 text-white"
         class="rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
       >
-        Dashboard Admin
+        Órdenes
       </a>
     </div>
 
-    <!-- Acciones derecha -->
     <div class="flex items-center gap-3">
-
-      <!-- Botón carrito -->
       <button
         type="button"
         (click)="goToCart()"
@@ -58,24 +54,22 @@
         Carrito
 
         <span
-          *ngIf="cartCount() > 0"
+          *ngIf="cartCount > 0"
           class="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-slate-900 px-2 text-xs font-bold text-white"
         >
-          {{ cartCount() }}
+          {{ cartCount }}
         </span>
       </button>
 
-      <!-- Usuario autenticado -->
       <div *ngIf="isAuthenticated()" class="hidden text-right sm:block">
         <p class="text-sm font-semibold text-slate-800">
-          {{ username() }}
+          {{ username }}
         </p>
         <p class="text-xs uppercase tracking-wide text-slate-500">
-          {{ role() }}
+          {{ role }}
         </p>
       </div>
 
-      <!-- Logout -->
       <button
         *ngIf="isAuthenticated(); else guestActions"
         type="button"
@@ -85,7 +79,6 @@
         Cerrar sesión
       </button>
 
-      <!-- Login -->
       <ng-template #guestActions>
         <a
           routerLink="/login"

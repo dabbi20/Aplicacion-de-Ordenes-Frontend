@@ -7,7 +7,7 @@ import { EditProductPageComponent } from './features/products/pages/edit-product
 import { OrdersPageComponent } from './features/orders/pages/orders-page.component';
 import { CartPageComponent } from './features/cart/pages/cart-page.component';
 import { authGuard } from './core/guards/auth.guard';
-import { AppShellComponent } from './layout/pages/app-shell.component';
+import { AppLayoutComponent } from './layout/app-layout.component';
 
 export const routes: Routes = [
   {
@@ -25,7 +25,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: AppShellComponent,
+    component: AppLayoutComponent,
     canActivate: [authGuard],
     children: [
       {

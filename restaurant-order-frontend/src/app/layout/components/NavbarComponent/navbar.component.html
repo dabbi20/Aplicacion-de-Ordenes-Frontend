@@ -1,137 +1,99 @@
-<header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur shadow-sm">
-  <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+<nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
 
-    <div class="flex items-center gap-3">
-      <a routerLink="/products" class="flex items-center gap-2">
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white font-bold shadow">
-          R
-        </div>
-        <div>
-          <p class="text-base font-bold text-slate-900 leading-none">Restaurant Orders</p>
-          <p class="text-xs text-slate-500">Panel de pedidos</p>
-        </div>
-      </a>
-    </div>
+    <!-- Brand -->
+    <a routerLink="/products" class="flex items-center gap-3">
+      <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white font-bold shadow-sm">
+        R
+      </div>
 
-    <div class="hidden md:flex items-center gap-6">
+      <div>
+        <p class="text-sm font-semibold leading-none text-slate-900">
+          Restaurant Order
+        </p>
+        <p class="text-xs text-slate-500">
+          Sistema de pedidos
+        </p>
+      </div>
+    </a>
+
+    <!-- Navegación desktop -->
+    <div class="hidden items-center gap-2 md:flex">
       <a
         routerLink="/products"
-        routerLinkActive="text-orange-600"
-        class="text-sm font-medium text-slate-700 transition hover:text-orange-600"
+        routerLinkActive="bg-slate-900 text-white"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
       >
         Productos
       </a>
 
       <a
-        *ngIf="isAdmin"
         routerLink="/orders"
-        routerLinkActive="text-orange-600"
-        class="text-sm font-medium text-slate-700 transition hover:text-orange-600"
+        routerLinkActive="bg-slate-900 text-white"
+        class="rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
       >
-        Órdenes
+        Mis pedidos
       </a>
 
+      <a
+        *ngIf="isAdmin()"
+        routerLink="/admin/orders"
+        routerLinkActive="bg-slate-900 text-white"
+        class="rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+      >
+        Dashboard Admin
+      </a>
+    </div>
+
+    <!-- Acciones derecha -->
+    <div class="flex items-center gap-3">
+
+      <!-- Botón carrito -->
       <button
         type="button"
         (click)="goToCart()"
-        class="relative rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-orange-400 hover:text-orange-600"
+        class="relative rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
       >
         Carrito
+
         <span
-          *ngIf="cartCount > 0"
-          class="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-orange-500 px-1 text-xs font-bold text-white"
+          *ngIf="cartCount() > 0"
+          class="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-slate-900 px-2 text-xs font-bold text-white"
         >
-          {{ cartCount }}
+          {{ cartCount() }}
         </span>
       </button>
 
-      <ng-container *ngIf="isLoggedIn; else guestActions">
-        <div class="flex items-center gap-3">
-          <div class="text-right">
-            <p class="text-sm font-semibold text-slate-800">{{ username }}</p>
-            <p class="text-xs text-slate-500">{{ roleLabel }}</p>
-          </div>
+      <!-- Usuario autenticado -->
+      <div *ngIf="isAuthenticated()" class="hidden text-right sm:block">
+        <p class="text-sm font-semibold text-slate-800">
+          {{ username() }}
+        </p>
+        <p class="text-xs uppercase tracking-wide text-slate-500">
+          {{ role() }}
+        </p>
+      </div>
 
-          <button
-            type="button"
-            (click)="logout()"
-            class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
-          >
-            Cerrar sesión
-          </button>
-        </div>
-      </ng-container>
+      <!-- Logout -->
+      <button
+        *ngIf="isAuthenticated(); else guestActions"
+        type="button"
+        (click)="logout()"
+        class="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+      >
+        Cerrar sesión
+      </button>
 
+      <!-- Login -->
       <ng-template #guestActions>
         <a
           routerLink="/login"
-          class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-orange-500 hover:text-orange-600"
-        >
-          Iniciar sesión
-        </a>
-      </ng-template>
-    </div>
-
-    <button
-      type="button"
-      class="md:hidden rounded-lg border border-slate-200 p-2 text-slate-700"
-      (click)="toggleMobileMenu()"
-    >
-      ☰
-    </button>
-  </nav>
-
-  <div *ngIf="mobileMenuOpen()" class="border-t border-slate-200 bg-white md:hidden">
-    <div class="space-y-3 px-4 py-4">
-      <a
-        routerLink="/products"
-        (click)="closeMobileMenu()"
-        class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
-      >
-        Productos
-      </a>
-
-      <a
-        *ngIf="isAdmin"
-        routerLink="/orders"
-        (click)="closeMobileMenu()"
-        class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
-      >
-        Órdenes
-      </a>
-
-      <button
-        type="button"
-        (click)="goToCartFromMobile()"
-        class="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-100"
-      >
-        Carrito ({{ cartCount }})
-      </button>
-
-      <ng-container *ngIf="isLoggedIn; else guestMobile">
-        <div class="rounded-lg bg-slate-50 px-3 py-3">
-          <p class="text-sm font-semibold text-slate-800">{{ username }}</p>
-          <p class="text-xs text-slate-500">{{ roleLabel }}</p>
-        </div>
-
-        <button
-          type="button"
-          (click)="logout()"
-          class="w-full rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white"
-        >
-          Cerrar sesión
-        </button>
-      </ng-container>
-
-      <ng-template #guestMobile>
-        <a
-          routerLink="/login"
-          (click)="closeMobileMenu()"
-          class="block rounded-xl border border-slate-300 px-4 py-2 text-center text-sm font-medium text-slate-700"
+          class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
         >
           Iniciar sesión
         </a>
       </ng-template>
     </div>
   </div>
-</header>
+</nav>

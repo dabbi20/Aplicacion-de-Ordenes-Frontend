@@ -19,8 +19,6 @@ export class CartService {
   private cartItemsSubject = new BehaviorSubject<CartItem[]>(this.loadCart());
 
   cartItems$ = this.cartItemsSubject.asObservable();
-
-  // alias para compatibilidad con código viejo
   items$ = this.cartItems$;
 
   private loadCart(): CartItem[] {

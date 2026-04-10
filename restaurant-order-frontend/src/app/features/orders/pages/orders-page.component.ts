@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { finalize } from 'rxjs';
 import { OrderResponse } from '../models/order.model';
 import { OrderService } from '../services/order.service';
 
@@ -26,10 +27,7 @@ import { OrderService } from '../services/order.service';
         </button>
       </div>
 
-      <div
-        *ngIf="errorMessage"
-        class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700"
-      >
+      <div *ngIf="errorMessage" class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
         {{ errorMessage }}
       </div>
 
@@ -37,10 +35,7 @@ import { OrderService } from '../services/order.service';
         <p class="text-slate-600">Cargando tus pedidos...</p>
       </div>
 
-      <div
-        *ngIf="!isLoading && orders.length === 0"
-        class="rounded-2xl bg-white p-8 text-center shadow-sm"
-      >
+      <div *ngIf="!isLoading && orders.length === 0" class="rounded-2xl bg-white p-8 text-center shadow-sm">
         <p class="text-slate-600">Todavía no tienes pedidos registrados.</p>
       </div>
 
@@ -136,21 +131,27 @@ export class OrdersPageComponent implements OnInit {
   }
 
   loadOrders(): void {
+    console.log('LOAD ORDERS START');
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.orderService.getMyOrders().subscribe({
-      next: (response) => {
-        this.orders = response;
+    this.orderService.getMyOrders()
+      .pipe(finalize(() => {
+        console.log('LOAD ORDERS FINALIZE');
         this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading my orders:', error);
-        this.errorMessage =
-          error?.error?.message || 'No se pudieron cargar tus pedidos';
-        this.isLoading = false;
-      }
-    });
+      }))
+      .subscribe({
+        next: (response: OrderResponse[]) => {
+          console.log('MY ORDERS RESPONSE', response);
+          this.orders = response ?? [];
+        },
+        error: (error: any) => {
+          console.error('ERROR LOADING MY ORDERS', error);
+          this.errorMessage =
+            error?.error?.message ||
+            `No se pudieron cargar tus pedidos. Status: ${error?.status ?? 'desconocido'}`;
+        }
+      });
   }
 
   getStatusClasses(status: string): string {

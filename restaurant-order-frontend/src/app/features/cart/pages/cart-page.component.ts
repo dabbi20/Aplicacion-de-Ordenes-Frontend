@@ -182,7 +182,6 @@ export class CartPageComponent implements OnInit {
 
   cartItems: CartItem[] = [];
   errorMessage = '';
-
   selectedPaymentType: 'CASH' | 'CARD' | 'TRANSFER' = 'CASH';
 
   ngOnInit(): void {
@@ -275,7 +274,10 @@ export class CartPageComponent implements OnInit {
           confirmText: 'Aceptar'
         });
 
-        this.router.navigate(['/products']);
+        setTimeout(() => {
+          this.router.navigate(['/products']);
+        }, 1200);
+
         this.cdr.detectChanges();
       },
       error: (error) => {

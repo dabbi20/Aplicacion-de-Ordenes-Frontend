@@ -2,7 +2,6 @@ export type OrderStatus = 'CREATED' | 'PREPARING' | 'DELIVERED';
 export type PaymentType = 'CASH' | 'CARD' | 'TRANSFER';
 
 export interface OrderItemResponse {
-  id: number;
   productId: number;
   productName: string;
   quantity: number;
@@ -11,14 +10,14 @@ export interface OrderItemResponse {
 }
 
 export interface OrderResponse {
-  id: number;
+  orderId: number;
   userId: number;
-  username?: string;
+  userName: string;
   paymentType: PaymentType;
   status: OrderStatus;
   subtotal: number;
   tax: number;
   total: number;
-  createdAt?: string;
+  createdAt: string;
   items: OrderItemResponse[];
 }

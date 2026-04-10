@@ -9,7 +9,7 @@ import { OrderResponse, OrderStatus } from '../models/order.model';
 })
 export class OrderService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/api/orders';
+  private readonly apiUrl = 'http://localhost:8081/api/orders';
 
   createOrder(request: CreateOrderRequest): Observable<OrderResponse> {
     return this.http.post<OrderResponse>(this.apiUrl, request);

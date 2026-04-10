@@ -49,13 +49,13 @@ import { OrderService } from '../services/order.service';
               <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
                 <div>
                   <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Orden</p>
-                  <p class="text-sm font-bold text-slate-800">#{{ order.id }}</p>
+                  <p class="text-sm font-bold text-slate-800">#{{ order.orderId }}</p>
                 </div>
 
                 <div>
                   <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Cliente</p>
                   <p class="text-sm font-medium text-slate-800">
-                    {{ order.username || ('Usuario #' + order.userId) }}
+                    {{ order.userName || ('Usuario #' + order.userId) }}
                   </p>
                 </div>
 
@@ -88,7 +88,7 @@ import { OrderService } from '../services/order.service';
                   <select
                     class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
                     [ngModel]="order.status"
-                    (ngModelChange)="changeStatus(order.id, $event)"
+                    (ngModelChange)="changeStatus(order.orderId, $event)"
                   >
                     <option value="CREATED">CREATED</option>
                     <option value="PREPARING">PREPARING</option>
@@ -175,7 +175,7 @@ export class OrdersPageComponent implements OnInit {
     this.orderService.updateOrderStatus(orderId, status).subscribe({
       next: (updatedOrder) => {
         this.orders = this.orders.map(order =>
-          order.id === updatedOrder.id ? updatedOrder : order
+          order.orderId === updatedOrder.orderId ? updatedOrder : order
         );
       },
       error: (error) => {
